@@ -14,11 +14,13 @@ function TodoList({ todos, setTodos }) {
   const handlerToggleIsDone = (id) => {
     const updatedTodos = todos.map((todo) => (todo.id === id ? { ...todo, isDone: !todo.isDone } : todo));
     setTodos(updatedTodos);
+    console.log(todos);
   };
 
   const handlerDeleteBtnClick = (id) => {
     const updatedTodos = todos.filter((todo) => todo.id !== id);
     setTodos(updatedTodos);
+    console.log(todos);
   };
 
   return (

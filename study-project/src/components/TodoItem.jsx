@@ -18,7 +18,7 @@ const CheckCircle = styled.div`
   margin-right: 20px;
   cursor: pointer;
   ${(props) =>
-    props.done &&
+    props.isDone &&
     css`
       border: 1px solid #38d9a9;
       color: #38d9a9;
