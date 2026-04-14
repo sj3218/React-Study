@@ -55,10 +55,16 @@ function TodoInput({ todos, setTodos }) {
       console.log('add task');
     }
   };
+  const handlerKeyDown = (event) =>{
+    if(event.key === 'Enter')
+    {
+      handlerAddBtnClick();
+    }
+  };
 
   return (
     <InputContainer>
-      <StyledInput placeholder="input your task" value={newTask} onChange={handlerValueChange} />
+      <StyledInput placeholder="input your task" value={newTask} onChange={handlerValueChange} onKeyDown = {handlerKeyDown}/>
       <AddButton classname="add-box" onClick={handlerAddBtnClick}>
         Add
       </AddButton>

@@ -30,7 +30,7 @@ const TasksLeft = styled.div`
 `;
 
 function TodoHeader({ todos }) {
-  //const undoneTasks = todos.filter((todo) => !todo.done);
+  const undoneTasks = todos.filter((todo) => !todo.isDone);
   //안한일 개수 정리
   return (
     <HeaderContainer>
@@ -38,7 +38,7 @@ function TodoHeader({ todos }) {
         <Title>Todo List</Title>
         <DateText>{new Date().toLocaleDateString()}</DateText>
       </Header>
-      {/* <TasksLeft>할 일 {undoneTasks.length}개 남음</TasksLeft> */}
+      <TasksLeft>할 일 {undoneTasks.length}개 남음</TasksLeft>
     </HeaderContainer>
   );
 }

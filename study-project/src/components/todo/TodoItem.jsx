@@ -20,8 +20,9 @@ const CheckCircle = styled.div`
   ${(props) =>
     props.isDone &&
     css`
-      border: 1px solid #38d9a9;
-      color: #38d9a9;
+      background: #7cc59a;      /* 내부를 초록색으로 채움 */
+      border: 1px solid #7cc59a; /* 테두리도 초록색으로 */
+      color: white;             /* 체크 표시(V)는 하얀색으로 */
     `}
 `;
 
@@ -29,6 +30,11 @@ const Text = styled.div`
   flex: 1;
   color: #495057;
   font-size: 18px;
+  ${(props) =>
+    props.isDone && css`
+    color: #ced4da;
+    text-decoration: line-through;`
+  }
 `;
 
 const Remove = styled.div`
@@ -51,9 +57,9 @@ function TodoItem({ todo, handlerToggleIsDone, handlerDeleteBtnClick }) {
   return (
     <TodoItemBlock>
       <CheckCircle isDone={isDone} onClick={() => handlerToggleIsDone(id)}>
-        {isDone}
+        {isDone && '✔'}
       </CheckCircle>
-      <Text>{task}</Text>
+      <Text isDone={isDone}>{task}</Text>
       <Remove onClick={() => handlerDeleteBtnClick(id)}>X</Remove>
     </TodoItemBlock>
   );

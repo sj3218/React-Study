@@ -21,11 +21,11 @@ const initialTodos = [
 ];
 
 function TodoTemplate() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(initialTodos);
 
   return (
     <Template>
-      <TodoHeader />
+      <TodoHeader todos={todos}/>
       <TodoInput todos={todos} setTodos={setTodos} />
       <TodoList todos={todos} setTodos={setTodos} />
     </Template>

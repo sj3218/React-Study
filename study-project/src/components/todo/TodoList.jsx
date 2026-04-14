@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import TodoItem from '../TodoItem';
+import TodoItem from './TodoItem';
 import { useState } from 'react';
 import { isDocument } from '@testing-library/user-event/dist/utils';
 
