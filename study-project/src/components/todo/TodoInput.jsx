@@ -1,4 +1,6 @@
-import styled from "styled-components";
+import { useState } from 'react';
+import styled from 'styled-components';
+import { v4 as uuid4 } from 'uuid';
 
 const InputContainer = styled.div`
   display: flex;
@@ -35,11 +37,31 @@ const AddButton = styled.button`
     background: #f8f9fa;
   }
 `;
-function TodoInput() {
+
+function TodoInput({ todos, setTodos }) {
+  const [newTask, setNewTask] = useState('');
+  const handlerValueChange = (event) => {
+    setNewTask(event.target.value);
+  };
+  const handlerAddBtnClick = () => {
+    if (newTask.trim() !== '') {
+      const newTodo = {
+        id: uuid4(),
+        task: newTask,
+        isDone: false
+      };
+      setTodos([...todos, newTodo]);
+      setNewTask('');
+      console.log('add task');
+    }
+  };
+
   return (
     <InputContainer>
-      <StyledInput placeholder="input your task" />
-      <AddButton>Add </AddButton>
+      <StyledInput placeholder="input your task" value={newTask} onChange={handlerValueChange} />
+      <AddButton classname="add-box" onClick={handlerAddBtnClick}>
+        Add
+      </AddButton>
     </InputContainer>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const TodoItemBlock = styled.div`
   display: flex;
@@ -17,6 +17,12 @@ const CheckCircle = styled.div`
   justify-content: center;
   margin-right: 20px;
   cursor: pointer;
+  ${(props) =>
+    props.done &&
+    css`
+      border: 1px solid #38d9a9;
+      color: #38d9a9;
+    `}
 `;
 
 const Text = styled.div`
@@ -39,12 +45,16 @@ const Remove = styled.div`
   }
 `;
 
-function TodoItem({ text }) {
+function TodoItem({ todo, handlerToggleIsDone, handlerDeleteBtnClick }) {
+  const { id, task, isDone } = todo;
+
   return (
     <TodoItemBlock>
-      <CheckCircle />
-      <Text>{text}</Text>
-      <Remove>X</Remove>
+      <CheckCircle isDone={isDone} onClick={() => handlerToggleIsDone(id)}>
+        {isDone}
+      </CheckCircle>
+      <Text>{task}</Text>
+      <Remove onClick={() => handlerDeleteBtnClick(id)}>X</Remove>
     </TodoItemBlock>
   );
 }

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import TodoItem from '../TodoItem';
 import { useState } from 'react';
+import { isDocument } from '@testing-library/user-event/dist/utils';
 
 const TodoListBlock = styled.div`
   flex: 1;
@@ -9,16 +10,27 @@ const TodoListBlock = styled.div`
   overflow-y: auto;
 `;
 
-const initialTodos = [
-  { id: '1', isDone: false, content: 'C++', date: Date.now() },
-  { id: '2', idDone: false, content: 'React', date: Date.now() }
-];
+function TodoList({ todos, setTodos }) {
+  const handlerToggleIsDone = (id) => {
+    const updatedTodos = todos.map((todo) => (todo.id === id ? { ...todo, isDone: !todo.isDone } : todo));
+    setTodos(updatedTodos);
+  };
 
-function TodoList() {
-  const [todos, setTodos] = useState(initialTodos);
+  const handlerDeleteBtnClick = (id) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
+  };
+
   return (
     <TodoListBlock>
-      <TodoItem text="hello" />
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          handlerToggleIsDone={handlerToggleIsDone}
+          handlerDeleteBtnClick={handlerDeleteBtnClick}
+        />
+      ))}
     </TodoListBlock>
   );
 }

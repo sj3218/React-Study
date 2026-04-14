@@ -2,6 +2,7 @@ import TodoHeader from './TodoHeader';
 import TodoInput from './TodoInput';
 import styled from 'styled-components';
 import TodoList from './TodoList';
+import { useState } from 'react';
 
 const Template = styled.div`
   width: 500px;
@@ -14,12 +15,19 @@ const Template = styled.div`
   flex-direction: column;
 `;
 
+const initialTodos = [
+  { id: '1', isDone: false, task: 'C++', date: Date.now() },
+  { id: '2', idDone: false, task: 'React', date: Date.now() }
+];
+
 function TodoTemplate() {
+  const [todos, setTodos] = useState([]);
+
   return (
     <Template>
       <TodoHeader />
-      <TodoInput />
-      <TodoList text="hello" done={false} />
+      <TodoInput todos={todos} setTodos={setTodos} />
+      <TodoList todos={todos} setTodos={setTodos} />
     </Template>
   );
 }
