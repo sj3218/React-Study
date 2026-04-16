@@ -12,10 +12,17 @@ const ChartContainer = styled.div`
 
 	width: 500px;
 	max-width: 500px;
-	aspect-ratio: 1;
+	aspect-ratio: 1 / 1;
 
 	display: flex;
 	flex-direction: column;
+
+	/* 추가: 부모가 늘리는 것을 방지 */
+	align-self: flex-start;
+
+	/* 추가: 내부 콘텐츠 때문에 늘어나는 것 방지 */
+	min-height: 0;
+	box-sizing: border-box;
 `;
 
 const Title = styled.div`
@@ -75,6 +82,9 @@ function DoughnutChart({ title, size, data }) {
 			legend: { display: false },
 			tooltip: { enabled: true },
 			// colors: { enabled: false }, //using default color set
+			datalabels: {
+				display: false,
+			},
 		},
 	};
 
@@ -90,7 +100,7 @@ function DoughnutChart({ title, size, data }) {
 				{data.map((item, i) => (
 					<Row key={i}>
 						<Label>{item.name}</Label>
-						<Value>{item.value}%</Value>
+						<Value>{item.value}</Value>
 					</Row>
 				))}
 			</NameCardArea>

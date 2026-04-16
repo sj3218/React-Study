@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import TodoPage from "../pages/TodoPage";
@@ -7,6 +7,7 @@ import Layout from "../components/layouts/Layout";
 import AnimalCrossingPage from "../pages/AnimalCrossingPage";
 import PostPage from "../pages/PostPage";
 import StatisticsPage from "../pages/StatisticPage";
+import NonogramPage from "../pages/NonogramPage";
 
 function Router({ title, footerMessage }) {
 	const menuList = [
@@ -17,6 +18,7 @@ function Router({ title, footerMessage }) {
 		{ menu_id: 5, title: "AnimalCrossingPage", url: "/animal-crossing", page: AnimalCrossingPage },
 		{ menu_id: 6, title: "PostPage", url: "/posts", page: PostPage },
 		{ menu_id: 7, title: "StatisticsPage", url: "/statistics", page: StatisticsPage },
+		{ menu_id: 8, title: "NonogramPage", url: "/nonogram", page: NonogramPage },
 	];
 	return (
 		<Routes>

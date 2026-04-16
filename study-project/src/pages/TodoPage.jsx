@@ -2,7 +2,7 @@ import React from "react";
 import TodoTemplate from "../components/todo/TodoTemplate";
 import styled from "styled-components";
 
-const StyledTodoPage = styled.div`
+const TodoPageContainer = styled.div`
 	background: #d8d8d8;
 	display: grid;
 	min-height: 100vh;
@@ -23,12 +23,12 @@ const ContentArea = styled.div`
 
 function TodoPage() {
 	return (
-		<StyledTodoPage>
+		<TodoPageContainer>
 			<Title>Todo Page</Title>
 			<ContentArea>
 				<TodoTemplate />
 			</ContentArea>
-		</StyledTodoPage>
+		</TodoPageContainer>
 	);
 }
 
