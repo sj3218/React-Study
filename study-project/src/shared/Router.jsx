@@ -8,6 +8,7 @@ import AnimalCrossingPage from "../pages/AnimalCrossingPage";
 import PostPage from "../pages/PostPage";
 import StatisticsPage from "../pages/StatisticPage";
 import NonogramPage from "../pages/NonogramPage";
+import BrickBreakerPage from "../pages/BrickBreakerPage";
 
 function Router({ title, footerMessage }) {
 	const menuList = [
@@ -19,6 +20,7 @@ function Router({ title, footerMessage }) {
 		{ menu_id: 6, title: "PostPage", url: "/posts", page: PostPage },
 		{ menu_id: 7, title: "StatisticsPage", url: "/statistics", page: StatisticsPage },
 		{ menu_id: 8, title: "NonogramPage", url: "/nonogram", page: NonogramPage },
+		{ menu_id: 9, title: "BrickBreakerPage", url: "/brickbreaker", page: BrickBreakerPage },
 	];
 	return (
 		<Routes>
