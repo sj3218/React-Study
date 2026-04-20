@@ -1,19 +1,13 @@
 import { Menu, Moon, Sun } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
-interface HeaderProps {
-	title: string;
-	isSidebarOpen: boolean;
-	onOpenSidebar: () => void;
-	isDark: boolean;
-	setIsDark: Dispatch<SetStateAction<boolean>>;
-}
+import { useUI } from "../../context/UIContext";
 
-export const Header = ({ title, isSidebarOpen, onOpenSidebar, isDark, setIsDark }: HeaderProps) => {
+export const Header = () => {
+	const {title, isSidebarOpen, setIsSidebarOpen, isDark, toggleDark} = useUI();
 	return (
 		<header className="sticky top-0 bg-white border-b border-[#E2E8F0] px-10 py-5 flex items-center justify-between z-40">
 			<div className="flex items-center gap-6">
 				{!isSidebarOpen && (
-					<button onClick={onOpenSidebar} className="p-2 hover:bg-[#F1F5F9] rounded-lg text-[#64748B]">
+					<button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-[#F1F5F9] rounded-lg text-[#64748B]">
 						<Menu className="w-6 h-6" />
 					</button>
 				)}
@@ -29,7 +23,7 @@ export const Header = ({ title, isSidebarOpen, onOpenSidebar, isDark, setIsDark 
 				<div className="w-px h-6 bg-[#E2E8F0] hidden sm:block"></div>
 
 				<div className="flex items-center gap-4">
-					<button className="p-2 text-[#64748B] hover:text-[#1E293B] transition-colors relative" onClick={() => setIsDark(!isDark)}>
+					<button onClick={toggleDark} className="p-2 text-[#64748B] hover:text-[#1E293B] transition-colors relative">
 						{isDark ? <Sun size={20} /> : <Moon size={20} />}
 					</button>
 				</div>

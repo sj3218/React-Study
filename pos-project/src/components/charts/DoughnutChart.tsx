@@ -1,4 +1,4 @@
-import { COLORS, type DATA_NUMBER } from "../../constants/types";
+import { COLORS, type DATA_NUMBER } from "../../types/types";
 import { Chart as chartJS, ArcElement, Tooltip, Legend, Colors } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 chartJS.register(ArcElement, Tooltip, Legend, Colors);

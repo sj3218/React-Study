@@ -1,4 +1,4 @@
-import { COLORS, type DATA_NUMBER } from "../../constants/types";
+import { COLORS, type DATA_NUMBER } from "../../types/types";
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, type ChartOptions, Colors, plugins } from "chart.js";
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar } from "react-chartjs-2";
