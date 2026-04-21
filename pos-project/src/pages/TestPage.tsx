@@ -102,6 +102,13 @@ const TestPage = () => {
 				<StandardBar title={`BarChart- ${title}`} axis="x" data={chartData} />
 				<StandardBar title={`BarChart- ${title}`} axis="y" data={chartData} />
 			</div>
+
+			<div className="block-30 grid grid-cols-1 lg:grid-colos-4 gap-1">
+				<div className="bg-red-100" />
+				<div className="bg-red-200" />
+				<div className="bg-red-300" />
+				<div className="bg-red-400" />
+			</div>
 		</div>
 	);
 };
