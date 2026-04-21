@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useUI } from "../../context/UIContext";
 
 export const Sidebar = () => {
-	const {isSidebarOpen, setIsSidebarOpen} = useUI();
+	const { isSidebarOpen, setIsSidebarOpen } = useUI();
 	return (
 		<AnimatePresence mode="wait">
 			{isSidebarOpen && (

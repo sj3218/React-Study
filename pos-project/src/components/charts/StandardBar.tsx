@@ -19,7 +19,7 @@ export const StandardBar = ({ title, axis = "x", data }: StandardBarProps) => {
 			{
 				data: data?.map((item) => item.value) || [], // [100, 20, 80]
 				backgroundColor: COLORS,
-				borderRadius: 10,
+				borderRadius: 4,
 				borderSkipped: false,
 				barPercentage: 0.3, // 바 자체의 너비 (1.0이면 꽉 참)
 				categoryPercentage: 0.8, // 바가 들어가는 영역의 너비 (값이 클수록 축 간격이 좁아짐)
