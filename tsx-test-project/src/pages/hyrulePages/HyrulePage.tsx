@@ -17,10 +17,11 @@ const options = [
 export const HyrulePage = () => {
 	const [allData, setAllData] = useState<any[]>([]);
 	const [filteredData, setFilteredData] = useState<any[]>([]);
-	const [currentCategory, setCurrentCategory] = useState(0);
+	const [currentCategory, setCurrentCategory] = useState("");
 
 	const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-		setCurrentCategory(Number(e.target.value));
+		setCurrentCategory(e.target.value);
+		console.log(e.target.value);
 	};
 
 	useEffect(() => {
@@ -39,7 +40,7 @@ export const HyrulePage = () => {
 	}, []);
 
 	useEffect(() => {
-		if (currentCategory == 0) {
+		if (currentCategory == "") {
 			setFilteredData(allData);
 			return;
 		}
