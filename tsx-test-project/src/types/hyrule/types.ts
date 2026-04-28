@@ -8,27 +8,27 @@ export interface BaseItem {
 	dlc: boolean;
 }
 
-export interface Creatures extends BaseItem {
+export interface Creature extends BaseItem {
 	edible: boolean;
 	drops: string[];
 }
 
-export interface EQUIPMENT extends BaseItem {
+export interface Equipment extends BaseItem {
 	properties: {
 		attack: number;
 		defense: number;
 	};
 }
 
-export interface MATERIAL extends BaseItem {
+export interface Material extends BaseItem {
 	cooking_effect: string;
 	hearts_recovered: number;
 }
 
-export interface MONSTER extends BaseItem {
+export interface Monster extends BaseItem {
 	drops: string[];
 }
 
-export interface TREASURE extends BaseItem {
+export interface Treasure extends BaseItem {
 	drops: string[];
 }

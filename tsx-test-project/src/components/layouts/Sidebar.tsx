@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MENU_LIST } from "../../constants/menu";
 import { Link } from "react-router-dom";
 import { useUI } from "../../context/UIContext";
+import { useState } from "react";
 
 export const Sidebar = () => {
 	const { isSidebarOpen, setIsSidebarOpen } = useUI();
+	const [activeCategory, setActiveCategory] = useState("1");
 	return (
 		<AnimatePresence mode="wait">
 			{isSidebarOpen && (
@@ -26,7 +28,12 @@ export const Sidebar = () => {
 						<nav className="flex-1 space-y-0.5">
 							{MENU_LIST.map((menu, index) => (
 								<Link to={menu.url} key={index}>
-									<div className="sidebar-item sidebar-item-active">
+								
+									<div className={`w-full flex items-center p-3 rounded-xl transition-all ${
+                 activeCategory === menu.id 
+                  ? 'bg-[#00C3FF]/10 border border-[#00C3FF]/30 text-[#00C3FF]' 
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}>
 										<menu.icon className="w-5 h-5" />
 										<span className="text-sm font-semibold">{menu.title}</span>
 									</div>
