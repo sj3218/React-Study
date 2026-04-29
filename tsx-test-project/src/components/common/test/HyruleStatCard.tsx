@@ -1,10 +1,16 @@
+import { Link, useNavigate } from "react-router-dom";
 import type { BaseItem } from "../../../types/hyrule/types"
 import { Map, Info} from 'lucide-react';
 
 export const HyruleStatCard = ({item} : {item:BaseItem}) => {
-    
+  // const navigate = useNavigate();
+  // const handleCardClick = () =>
+  // {
+  //   navigate('/creatures/${item.id}');
+  // };
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <Link to={`/creatures/${item.id}`}>
           <div key={item.id} className="group bg-[#12161D] border border-[#1E2530] rounded-2xl overflow-hidden hover:border-[#00C3FF]/50 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
                 <div className="aspect-square bg-[#0A0C10] relative flex items-center justify-center p-8">
                   <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_#00C3FF_0%,_transparent_70%)]"></div>
@@ -35,7 +41,7 @@ export const HyruleStatCard = ({item} : {item:BaseItem}) => {
           </span>
                   </div>
                 </div>
-              </div>
-        </div>
+          </div>
+      </Link>
     )
 }

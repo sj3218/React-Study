@@ -1,0 +1,18 @@
+{
+  "name": "webgl-project",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.10"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.4",
+    "lil-gui": "^0.21.0"
+  }
+}

@@ -1,0 +1,64 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f0eeea;
+  --border: #d0cdc8;
+  --border-light: #e0ddd9;
+  --text-primary: #111;
+  --text-secondary: #555;
+  --text-muted: #aaa;
+  --track-fill: #111;
+  --track-empty: #d0cdc8;
+  --font: 'Courier New', Courier, monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+/* Range input global */
+input[type='range'] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--track-fill) var(--pct, 50%),
+    var(--track-empty) var(--pct, 50%)
+  );
+  outline: none;
+  cursor: pointer;
+  border: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--track-fill);
+  cursor: pointer;
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--track-fill);
+}
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--track-fill);
+  border: none;
+  cursor: pointer;
+}

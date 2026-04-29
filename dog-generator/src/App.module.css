@@ -1,0 +1,29 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.canvasWrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.hints {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 28px;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 5;
+  white-space: nowrap;
+  font-family: var(--font);
+}

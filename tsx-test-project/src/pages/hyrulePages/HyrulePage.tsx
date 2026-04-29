@@ -187,8 +187,9 @@ export const HyrulePage = () => {
 			{/* search */}
 			<div className="px-10 py-10 flex-1 "></div>
 			{/* stat card - button */}
-			<div className="flex flex-wrap justify-center gap-8 my-10 w-full">
-				{renderContent()}
+			{/* 기존 방식 대신 이 방식을 사용해 보세요 */}
+			<div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6">
+  				{renderContent()}
 			</div>
 		</div>
 	);
