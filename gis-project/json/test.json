@@ -1,0 +1,10 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [128.6014, 35.8714] },
+      "properties": { "name": "대구 중심", "type": "테스트" }
+    }
+  ]
+}

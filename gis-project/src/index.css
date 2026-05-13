@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  font-family: "DM Mono", monospace;
+  background: #f8f9fc;
+}
+
+/* Leaflet 팝업 스타일 강제 오버라이드 */
+.leaflet-popup-content-wrapper {
+  background: white;
+  color: #333;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+.leaflet-popup-tip {
+  background: white;
+}
+
+.leaflet-popup-content {
+  margin: 10px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
