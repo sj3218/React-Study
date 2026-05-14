@@ -3,7 +3,7 @@ import { Marker, Popup, MapContainer, TileLayer, useMap } from "react-leaflet";
 import { startIcon, endIcon } from "../utils/icons";
 import ClickHandler from "./ClickHandler";
 import RoutePolyline from "./RoutePolyline";
-import GeoJsonLayer from "./GeoJsonLayer"; // ✅
+import GeoJsonLayer from "./GeoJsonLayer";
 
 function FlyTo({ start, end }) {
   const map = useMap();
@@ -25,8 +25,8 @@ function FlyTo({ start, end }) {
   return null;
 }
 
-export default function Map({ hook, layers }) {
-  // ✅ layers 추가
+export default function Map({ hook, layers, tileLayer }) {
+  // ✅ tileLayer 추가
   const { start, end, route, handleMapClick, updateMarker } = hook;
 
   return (
@@ -36,13 +36,16 @@ export default function Map({ hook, layers }) {
         zoom={13}
         style={{ height: "100vh", width: "100%" }}
       >
+        {/* ✅ key로 강제 리렌더링해서 타일 교체 */}
         <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          key={tileLayer.url}
+          attribution={tileLayer.attribution}
+          url={tileLayer.url}
         />
         <ClickHandler onMapClick={handleMapClick} />
         <FlyTo start={start} end={end} />
-        <GeoJsonLayer layers={layers} /> {/* ✅ */}
+        <GeoJsonLayer layers={layers} />
+
         {start && (
           <Marker
             position={start}
@@ -79,6 +82,7 @@ export default function Map({ hook, layers }) {
             </Popup>
           </Marker>
         )}
+
         <RoutePolyline route={route} />
       </MapContainer>
     </div>

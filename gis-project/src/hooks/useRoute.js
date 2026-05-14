@@ -12,6 +12,16 @@ const fetchRoute = async (start, end) => {
   };
 };
 
+const STORAGE_KEY = "gis_saved_routes";
+
+const getSaved = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+};
+
 export default function useRoute() {
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
@@ -19,6 +29,7 @@ export default function useRoute() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("start");
   const [info, setInfo] = useState(null);
+  const [savedRoutes, setSavedRoutes] = useState(getSaved);
 
   const applyRoute = async (s, e) => {
     setLoading(true);
@@ -55,7 +66,6 @@ export default function useRoute() {
     if (newStart && newEnd) await applyRoute(newStart, newEnd);
   };
 
-  // ✅ 검색으로 마커 설정
   const setMarker = async (type, latlng) => {
     if (type === "start") {
       setStart(latlng);
@@ -78,6 +88,38 @@ export default function useRoute() {
     setMode("start");
   };
 
+  // ✅ 현재 경로 저장
+  const saveRoute = (name) => {
+    if (!start || !end || !info) return;
+    const entry = {
+      id: Date.now(),
+      name,
+      start: { lat: start.lat, lng: start.lng },
+      end: { lat: end.lat, lng: end.lng },
+      distance: info.distance,
+      duration: info.duration,
+      savedAt: new Date().toLocaleDateString("ko-KR"),
+    };
+    const updated = [entry, ...getSaved()];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setSavedRoutes(updated);
+  };
+
+  // ✅ 저장된 경로 불러오기
+  const loadRoute = async (entry) => {
+    setStart(entry.start);
+    setEnd(entry.end);
+    setMode("start");
+    await applyRoute(entry.start, entry.end);
+  };
+
+  // ✅ 저장된 경로 삭제
+  const deleteSaved = (id) => {
+    const updated = getSaved().filter((r) => r.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setSavedRoutes(updated);
+  };
+
   return {
     start,
     end,
@@ -89,5 +131,9 @@ export default function useRoute() {
     updateMarker,
     setMarker,
     reset,
+    savedRoutes,
+    saveRoute,
+    loadRoute,
+    deleteSaved,
   };
 }

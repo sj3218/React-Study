@@ -1,5 +1,8 @@
-import { useRef, useState, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import SearchBox from "./SearchBox";
+import SavedRoutes from "./SavedRoutes";
+import Accordion from "./Accordion";
+import { TILE_LAYERS } from "../hooks/useTileLayer";
 
 const DOT = ({ color }) => (
   <span
@@ -13,20 +16,6 @@ const DOT = ({ color }) => (
       flexShrink: 0,
     }}
   />
-);
-
-const SectionLabel = ({ children }) => (
-  <div
-    style={{
-      fontSize: 10,
-      color: "#94a3b8",
-      letterSpacing: "0.15em",
-      textTransform: "uppercase",
-      marginBottom: 10,
-    }}
-  >
-    {children}
-  </div>
 );
 
 const CoordCard = ({ label, color, value }) => (
@@ -116,18 +105,13 @@ export default function Sidebar({
   onFileLoad,
   onToggleLayer,
   onRemoveLayer,
+  savedRoutes,
+  onSaveRoute,
+  onLoadRoute,
+  onDeleteSaved,
+  currentTile,
+  onTileChange,
 }) {
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) onFileLoad(file);
-  };
-
-  const handleFileInput = (e) => {
-    const file = e.target.files[0];
-    if (file) onFileLoad(file);
-    e.target.value = ""; // 같은 파일 재업로드 허용
-  };
   const [width, setWidth] = useState(280);
   const isDragging = useRef(false);
   const startX = useRef(0);
@@ -144,13 +128,10 @@ export default function Sidebar({
       const onMouseMove = (e) => {
         if (!isDragging.current) return;
         const delta = e.clientX - startX.current;
-        const newWidth = Math.min(
-          MAX_WIDTH,
-          Math.max(MIN_WIDTH, startWidth.current + delta),
+        setWidth(
+          Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidth.current + delta)),
         );
-        setWidth(newWidth);
       };
-
       const onMouseUp = () => {
         isDragging.current = false;
         document.body.style.cursor = "";
@@ -158,12 +139,22 @@ export default function Sidebar({
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("mouseup", onMouseUp);
       };
-
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
     },
     [width],
   );
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) onFileLoad(file);
+  };
+  const handleFileInput = (e) => {
+    const file = e.target.files[0];
+    if (file) onFileLoad(file);
+    e.target.value = "";
+  };
 
   const km = info ? (info.distance / 1000).toFixed(1) : "—";
   const timeStr = (() => {
@@ -179,7 +170,6 @@ export default function Sidebar({
     : mode === "start"
       ? "출발지를 클릭하세요"
       : "도착지를 클릭하세요";
-
   const modeColor = loading
     ? "#f59e0b"
     : mode === "start"
@@ -187,18 +177,20 @@ export default function Sidebar({
       : "#ef4444";
 
   return (
-    <div style={{ position: "relative", display: "flex", flexShrink: 0 }}>
+    // ✅ 프래그먼트로 사이드바 + 핸들 나란히
+    <>
       {/* 사이드바 본체 */}
       <div
         style={{
-          width,
+          width, // ✅ width state 적용
+          minWidth: width,
+          flexShrink: 0,
           background: "#ffffff",
-          borderRight: "1px solid #e2e8f0",
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          boxShadow: "2px 0 12px rgba(0,0,0,0.06)",
           overflow: "hidden",
+          boxShadow: "2px 0 8px rgba(0,0,0,0.06)",
         }}
       >
         {/* 헤더 */}
@@ -206,6 +198,7 @@ export default function Sidebar({
           style={{
             padding: "20px 20px 16px",
             borderBottom: "1px solid #e2e8f0",
+            flexShrink: 0,
           }}
         >
           <div
@@ -236,248 +229,265 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* 모드 */}
-        <div
-          style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}
-        >
-          <SectionLabel>현재 모드</SectionLabel>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 12px",
-              borderRadius: 8,
-              background: "#f8fafc",
-              border: "1px solid #e2e8f0",
-            }}
-          >
-            <DOT color={modeColor} />
-            <span style={{ fontSize: 12, color: "#475569" }}>{modeText}</span>
-          </div>
-        </div>
-
-        <div
-          style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}
-        >
-          <SectionLabel>주소 검색</SectionLabel>
-          <SearchBox
-            label="출발지"
-            color="#22c55e"
-            onSelect={(latlng) => onSearch("start", latlng)}
-          />
-          <SearchBox
-            label="도착지"
-            color="#ef4444"
-            onSelect={(latlng) => onSearch("end", latlng)}
-          />
-        </div>
-
-        {/* 마커 좌표 */}
-        <div
-          style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}
-        >
-          <SectionLabel>마커</SectionLabel>
-          <CoordCard
-            label="출발지"
-            color="#22c55e"
-            value={
-              start ? `${start.lat.toFixed(5)}, ${start.lng.toFixed(5)}` : null
-            }
-          />
-          <CoordCard
-            label="도착지"
-            color="#ef4444"
-            value={end ? `${end.lat.toFixed(5)}, ${end.lng.toFixed(5)}` : null}
-          />
-        </div>
-
-        {/* 경로 정보 */}
-        <div
-          style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}
-        >
-          <SectionLabel>경로 정보</SectionLabel>
-          <div style={{ display: "flex", gap: 8 }}>
-            <InfoCard value={km} unit="km" />
-            <InfoCard value={timeStr} unit="예상 시간" />
-          </div>
-        </div>
-
-        {/* 초기화 버튼 */}
-        {(start || end) && (
-          <div style={{ padding: "12px 20px" }}>
-            <button
-              onClick={onReset}
-              style={{
-                width: "100%",
-                padding: 10,
-                background: "transparent",
-                border: "1px solid #e2e8f0",
-                borderRadius: 8,
-                color: "#94a3b8",
-                fontSize: 12,
-                cursor: "pointer",
-                letterSpacing: "0.05em",
-                fontFamily: "inherit",
-                transition: "all 0.15s",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.borderColor = "#ef4444";
-                e.target.style.color = "#ef4444";
-                e.target.style.background = "#fef2f2";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.borderColor = "#e2e8f0";
-                e.target.style.color = "#94a3b8";
-                e.target.style.background = "transparent";
-              }}
-            >
-              ↺ 초기화
-            </button>
-          </div>
-        )}
-        <div
-          style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}
-        >
-          <SectionLabel>GeoJSON 레이어</SectionLabel>
-
-          {/* 파일 업로드 드롭존 */}
-          <div
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-            onClick={() => document.getElementById("geojson-input").click()}
-            style={{
-              border: "1.5px dashed #e2e8f0",
-              borderRadius: 8,
-              padding: "14px 12px",
-              textAlign: "center",
-              cursor: "pointer",
-              marginBottom: 10,
-              transition: "all 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#2563eb";
-              e.currentTarget.style.background = "#eff6ff";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "#e2e8f0";
-              e.currentTarget.style.background = "transparent";
-            }}
-          >
-            <div style={{ fontSize: 18, marginBottom: 4 }}>📂</div>
-            <div style={{ fontSize: 11, color: "#94a3b8" }}>
-              클릭하거나 파일을 드래그하세요
-            </div>
-            <div style={{ fontSize: 10, color: "#cbd5e1", marginTop: 2 }}>
-              .geojson / .json
-            </div>
-            <input
-              id="geojson-input"
-              type="file"
-              accept=".geojson,.json"
-              style={{ display: "none" }}
-              onChange={handleFileInput}
-            />
-          </div>
-
-          {/* 레이어 목록 */}
-          {layers.map((layer) => (
+        {/* 스크롤 영역 */}
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          <Accordion title="현재 모드" defaultOpen={true}>
             <div
-              key={layer.id}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "8px 10px",
-                marginBottom: 4,
+                padding: "10px 12px",
+                borderRadius: 8,
                 background: "#f8fafc",
                 border: "1px solid #e2e8f0",
-                borderRadius: 8,
               }}
             >
-              {/* 색상 도트 */}
-              <div
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 2,
-                  background: layer.color,
-                  flexShrink: 0,
-                }}
-              />
-
-              {/* 레이어명 */}
-              <span
-                style={{
-                  fontSize: 11,
-                  color: layer.visible ? "#1e293b" : "#94a3b8",
-                  flex: 1,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {layer.name}
-              </span>
-
-              {/* 토글 버튼 */}
-              <button
-                onClick={() => onToggleLayer(layer.id)}
-                title={layer.visible ? "숨기기" : "보이기"}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  color: layer.visible ? "#2563eb" : "#cbd5e1",
-                  padding: 2,
-                  lineHeight: 1,
-                }}
-              >
-                {layer.visible ? "👁" : "👁️‍🗨️"}
-              </button>
-
-              {/* 삭제 버튼 */}
-              <button
-                onClick={() => onRemoveLayer(layer.id)}
-                title="레이어 삭제"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  color: "#cbd5e1",
-                  padding: 2,
-                  lineHeight: 1,
-                  transition: "color 0.1s",
-                }}
-                onMouseEnter={(e) => (e.target.style.color = "#ef4444")}
-                onMouseLeave={(e) => (e.target.style.color = "#cbd5e1")}
-              >
-                ✕
-              </button>
+              <DOT color={modeColor} />
+              <span style={{ fontSize: 12, color: "#475569" }}>{modeText}</span>
             </div>
-          ))}
+          </Accordion>
 
-          {layers.length === 0 && (
+          <Accordion title="지도 스타일" defaultOpen={false}>
             <div
               style={{
-                fontSize: 11,
-                color: "#e2e8f0",
-                textAlign: "center",
-                padding: "4px 0",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 6,
               }}
             >
-              업로드된 레이어 없음
+              {Object.entries(TILE_LAYERS).map(([key, val]) => (
+                <button
+                  key={key}
+                  onClick={() => onTileChange(key)}
+                  style={{
+                    padding: "8px 0",
+                    border:
+                      currentTile === key
+                        ? "1.5px solid #2563eb"
+                        : "1px solid #e2e8f0",
+                    borderRadius: 8,
+                    background: currentTile === key ? "#eff6ff" : "#f8fafc",
+                    color: currentTile === key ? "#2563eb" : "#64748b",
+                    fontSize: 12,
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {val.label}
+                </button>
+              ))}
+            </div>
+          </Accordion>
+
+          <Accordion title="주소 검색" defaultOpen={true}>
+            <SearchBox
+              label="출발지"
+              color="#22c55e"
+              onSelect={(l) => onSearch("start", l)}
+            />
+            <SearchBox
+              label="도착지"
+              color="#ef4444"
+              onSelect={(l) => onSearch("end", l)}
+            />
+          </Accordion>
+
+          <Accordion title="마커" defaultOpen={true}>
+            <CoordCard
+              label="출발지"
+              color="#22c55e"
+              value={
+                start
+                  ? `${start.lat.toFixed(5)}, ${start.lng.toFixed(5)}`
+                  : null
+              }
+            />
+            <CoordCard
+              label="도착지"
+              color="#ef4444"
+              value={
+                end ? `${end.lat.toFixed(5)}, ${end.lng.toFixed(5)}` : null
+              }
+            />
+          </Accordion>
+
+          <Accordion title="경로 정보" defaultOpen={true}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <InfoCard value={km} unit="km" />
+              <InfoCard value={timeStr} unit="예상 시간" />
+            </div>
+          </Accordion>
+
+          <Accordion title="경로 저장 / 불러오기" defaultOpen={false}>
+            <SavedRoutes
+              savedRoutes={savedRoutes}
+              canSave={!!start && !!end && !!info}
+              onSave={onSaveRoute}
+              onLoad={onLoadRoute}
+              onDelete={onDeleteSaved}
+            />
+          </Accordion>
+
+          <Accordion title="GeoJSON 레이어" defaultOpen={false}>
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              onClick={() => document.getElementById("geojson-input").click()}
+              style={{
+                border: "1.5px dashed #e2e8f0",
+                borderRadius: 8,
+                padding: "14px 12px",
+                textAlign: "center",
+                cursor: "pointer",
+                marginBottom: 10,
+                transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#2563eb";
+                e.currentTarget.style.background = "#eff6ff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "#e2e8f0";
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              <div style={{ fontSize: 18, marginBottom: 4 }}>📂</div>
+              <div style={{ fontSize: 11, color: "#94a3b8" }}>
+                클릭하거나 파일을 드래그하세요
+              </div>
+              <div style={{ fontSize: 10, color: "#cbd5e1", marginTop: 2 }}>
+                .geojson / .json
+              </div>
+              <input
+                id="geojson-input"
+                type="file"
+                accept=".geojson,.json"
+                style={{ display: "none" }}
+                onChange={handleFileInput}
+              />
+            </div>
+            {layers.length === 0 ? (
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "#e2e8f0",
+                  textAlign: "center",
+                  padding: "4px 0",
+                }}
+              >
+                업로드된 레이어 없음
+              </div>
+            ) : (
+              layers.map((layer) => (
+                <div
+                  key={layer.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "8px 10px",
+                    marginBottom: 4,
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: 8,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 2,
+                      background: layer.color,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: layer.visible ? "#1e293b" : "#94a3b8",
+                      flex: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {layer.name}
+                  </span>
+                  <button
+                    onClick={() => onToggleLayer(layer.id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: 13,
+                      color: layer.visible ? "#2563eb" : "#cbd5e1",
+                      padding: 2,
+                    }}
+                  >
+                    {layer.visible ? "👁" : "👁️‍🗨️"}
+                  </button>
+                  <button
+                    onClick={() => onRemoveLayer(layer.id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: 13,
+                      color: "#cbd5e1",
+                      padding: 2,
+                    }}
+                    onMouseEnter={(e) => (e.target.style.color = "#ef4444")}
+                    onMouseLeave={(e) => (e.target.style.color = "#cbd5e1")}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))
+            )}
+          </Accordion>
+
+          {(start || end) && (
+            <div style={{ padding: "12px 20px" }}>
+              <button
+                onClick={onReset}
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  background: "transparent",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 8,
+                  color: "#94a3b8",
+                  fontSize: 12,
+                  cursor: "pointer",
+                  letterSpacing: "0.05em",
+                  fontFamily: "inherit",
+                  transition: "all 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = "#ef4444";
+                  e.target.style.color = "#ef4444";
+                  e.target.style.background = "#fef2f2";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = "#e2e8f0";
+                  e.target.style.color = "#94a3b8";
+                  e.target.style.background = "transparent";
+                }}
+              >
+                ↺ 초기화
+              </button>
             </div>
           )}
         </div>
+
         {/* 푸터 */}
         <div
           style={{
-            marginTop: "auto",
-            padding: "16px 20px",
+            padding: "14px 20px",
             borderTop: "1px solid #f1f5f9",
+            flexShrink: 0,
           }}
         >
           <div
@@ -488,35 +498,32 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* ✅ 리사이즈 핸들 */}
+      {/* ✅ 핸들을 사이드바 바깥 형제로 분리 — 지도에 절대 안 가려짐 */}
       <div
         onMouseDown={onMouseDown}
         style={{
-          position: "absolute",
-          right: -3,
-          top: 0,
-          width: 6,
-          height: "100%",
+          width: 5,
+          height: "100vh",
           cursor: "col-resize",
-          zIndex: 10,
+          flexShrink: 0,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          background: "transparent",
+          zIndex: 100,
         }}
       >
-        {/* 핸들 시각적 표시 */}
         <div
           style={{
             width: 2,
             height: 40,
             borderRadius: 2,
             background: "#e2e8f0",
+            pointerEvents: "none",
             transition: "background 0.15s",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "#2563eb")}
-          onMouseLeave={(e) => (e.target.style.background = "#e2e8f0")}
         />
       </div>
-    </div>
+    </>
   );
 }
