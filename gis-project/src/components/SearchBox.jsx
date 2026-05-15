@@ -1,11 +1,41 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { MAP_MODE } from "../hooks/useTileLayer";
 
-const searchAddress = async (query) => {
+const VWORLD_KEY = import.meta.env.VITE_VWORLD_KEY;
+
+// ✅ OSM Nominatim 검색
+const searchByNominatim = async (query) => {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&countrycodes=kr`;
   const res = await fetch(url, { headers: { "Accept-Language": "ko" } });
-  return await res.json();
+  const data = await res.json();
+  return data.map((item) => ({
+    label: item.display_name.split(",")[0],
+    description: item.display_name,
+    lat: parseFloat(item.lat),
+    lng: parseFloat(item.lon),
+  }));
 };
+
+// ✅ V-World 검색
+const searchByVworld = async (query) => {
+  const url = `https://api.vworld.kr/req/search?service=search&request=search&version=2.0&crs=EPSG:4326&size=5&page=1&type=address&category=road&query=${encodeURIComponent(query)}&key=${VWORLD_KEY}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (data.response.status !== "OK") return [];
+
+  return data.response.result.items.map((item) => ({
+    label: item.address.road ?? item.address.parcel,
+    description: item.address.parcel ?? item.address.road,
+    lat: parseFloat(item.point.y),
+    lng: parseFloat(item.point.x),
+  }));
+};
+
+// ✅ 모드에 따라 자동 선택
+const searchAddress =
+  MAP_MODE === "vworld" ? searchByVworld : searchByNominatim;
 
 export default function SearchBox({ label, color, onSelect }) {
   const [query, setQuery] = useState("");
@@ -15,7 +45,6 @@ export default function SearchBox({ label, color, onSelect }) {
   const inputRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // 인풋 위치 계산해서 드롭다운 좌표 설정
   const updateDropdownPos = () => {
     if (!inputRef.current) return;
     const rect = inputRef.current.getBoundingClientRect();
@@ -52,12 +81,11 @@ export default function SearchBox({ label, color, onSelect }) {
   };
 
   const handleSelect = (item) => {
-    setQuery(item.display_name.split(",")[0]);
+    setQuery(item.label);
     setResults([]);
-    onSelect({ lat: parseFloat(item.lat), lng: parseFloat(item.lon) });
+    onSelect({ lat: item.lat, lng: item.lng });
   };
 
-  // 바깥 클릭 시 드롭다운 닫기
   useEffect(() => {
     const handleClick = (e) => {
       if (inputRef.current && !inputRef.current.contains(e.target)) {
@@ -81,8 +109,8 @@ export default function SearchBox({ label, color, onSelect }) {
     >
       {results.map((item, i) => (
         <div
-          key={item.place_id}
-          onMouseDown={() => handleSelect(item)} // onMouseDown으로 blur보다 먼저 실행
+          key={i}
+          onMouseDown={() => handleSelect(item)}
           style={{
             padding: "10px 12px",
             borderBottom: i < results.length - 1 ? "1px solid #f1f5f9" : "none",
@@ -100,7 +128,7 @@ export default function SearchBox({ label, color, onSelect }) {
               fontWeight: 500,
             }}
           >
-            {item.display_name.split(",")[0]}
+            {item.label}
           </div>
           <div
             style={{
@@ -111,7 +139,7 @@ export default function SearchBox({ label, color, onSelect }) {
               textOverflow: "ellipsis",
             }}
           >
-            {item.display_name}
+            {item.description}
           </div>
         </div>
       ))}
@@ -149,6 +177,10 @@ export default function SearchBox({ label, color, onSelect }) {
         >
           {label}
         </span>
+        {/* ✅ 검색 엔진 표시 */}
+        <span style={{ fontSize: 9, color: "#cbd5e1", marginLeft: "auto" }}>
+          {MAP_MODE === "vworld" ? "V-World" : "Nominatim"}
+        </span>
       </div>
 
       <div style={{ position: "relative" }}>
@@ -162,7 +194,9 @@ export default function SearchBox({ label, color, onSelect }) {
             updateDropdownPos();
           }}
           onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
-          placeholder="주소 또는 장소 검색"
+          placeholder={
+            MAP_MODE === "vworld" ? "도로명 주소 검색" : "주소 또는 장소 검색"
+          }
           style={{
             width: "100%",
             padding: "9px 32px 9px 12px",
@@ -213,7 +247,6 @@ export default function SearchBox({ label, color, onSelect }) {
         )}
       </div>
 
-      {/* ✅ 드롭다운을 body에 포탈로 렌더링 */}
       {createPortal(dropdown, document.body)}
     </div>
   );

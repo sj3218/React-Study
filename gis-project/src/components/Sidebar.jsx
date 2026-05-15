@@ -2,8 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import SearchBox from "./SearchBox";
 import SavedRoutes from "./SavedRoutes";
 import Accordion from "./Accordion";
-import { TILE_LAYERS } from "../hooks/useTileLayer";
-
+import { TILE_LAYERS, MAP_MODE } from "../hooks/useTileLayer";
 const DOT = ({ color }) => (
   <span
     style={{
@@ -221,6 +220,22 @@ export default function Sidebar({
             >
               Route GIS
             </span>
+            {/* ✅ 모드 뱃지 */}
+            <span
+              style={{
+                fontSize: 9,
+                padding: "2px 7px",
+                borderRadius: 4,
+                background: MAP_MODE === "vworld" ? "#ecfdf5" : "#eff6ff",
+                color: MAP_MODE === "vworld" ? "#059669" : "#2563eb",
+                border: `1px solid ${MAP_MODE === "vworld" ? "#a7f3d0" : "#bfdbfe"}`,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
+            >
+              {MAP_MODE === "vworld" ? "V-World" : "OSM"}
+            </span>
           </div>
           <div
             style={{ fontSize: 11, color: "#94a3b8", letterSpacing: "0.05em" }}
@@ -273,6 +288,12 @@ export default function Sidebar({
                     cursor: "pointer",
                     fontFamily: "inherit",
                     transition: "all 0.15s",
+                    ...(key.startsWith("vworld") &&
+                      currentTile !== key && {
+                        borderColor: "#e0f2fe",
+                        color: "#0369a1",
+                        background: "#f0f9ff",
+                      }),
                   }}
                 >
                   {val.label}

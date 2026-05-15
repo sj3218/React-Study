@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
+    "dev": "vite --mode osm",
+    "dev:vworld": "vite --mode vworld",
+    "build": "vite build --mode osm",
+    "build:vworld": "vite build --mode vworld",
     "preview": "vite preview"
   },
   "dependencies": {
