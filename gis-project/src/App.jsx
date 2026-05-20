@@ -2,12 +2,12 @@ import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
 import useRoute from "./hooks/useRoute";
 import useGeoJson from "./hooks/useGeoJson";
-import useTileLayer from "./hooks/useTileLayer"; // ✅
+import useTileLayer from "./hooks/useTileLayer";
 
 export default function App() {
   const hook = useRoute();
   const geo = useGeoJson();
-  const tile = useTileLayer(); // ✅
+  const tile = useTileLayer();
 
   return (
     <div style={{ display: "flex", height: "100vh", background: "#f8f9fc" }}>

@@ -4,6 +4,7 @@ import { startIcon, endIcon } from "../utils/icons";
 import ClickHandler from "./ClickHandler";
 import RoutePolyline from "./RoutePolyline";
 import GeoJsonLayer from "./GeoJsonLayer";
+import { tileLayer } from "leaflet";
 
 function FlyTo({ start, end }) {
   const map = useMap();
@@ -26,7 +27,6 @@ function FlyTo({ start, end }) {
 }
 
 export default function Map({ hook, layers, tileLayer }) {
-  // ✅ tileLayer 추가
   const { start, end, route, handleMapClick, updateMarker } = hook;
 
   return (
