@@ -4,7 +4,7 @@ import "./App.css";
 function App() {
 	return (
 		<>
-			<Router title="이야이야호오오옹~~ " />
+			<Router />
 		</>
 	);
 }

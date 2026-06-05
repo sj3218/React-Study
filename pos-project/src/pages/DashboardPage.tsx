@@ -4,6 +4,7 @@ import { Statcard } from "../components/charts/Statcard";
 import { StackedBar } from "../components/charts/StackedBar";
 import { DoughnutChart } from "../components/charts/DoughnutChart";
 import { TestChart } from "../components/charts/TestChart";
+import { StandardBar } from "../components/charts/StandardBar";
 
 const DashboardPage = () => {
 	const stacked_bar_labels = ["09시", "10시", "11시", "12시", "13시", "14시", "15시", "16시", "17시"];
@@ -58,7 +59,8 @@ const DashboardPage = () => {
 					<StackedBar title="1" labels={stacked_bar_labels} data={stacked_bar_data} />
 					<StackedBar title="2" labels={stacked_bar_labels} data={stacked_bar_data} />
 					<DoughnutChart title="doughnut" data={doughnut_data} />
-					<TestChart title="Number of Logins" subTitle="Muyaho~" data={test_data} />
+					{/* <TestChart title="Number of Logins" subTitle="Muyaho~" data={test_data} /> */}
+					{/* <StandardBar title="gg" axis="x" data={} */}
 				</div>
 			</div>
 		</div>

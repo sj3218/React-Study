@@ -1,6 +1,3 @@
-import { number } from "motion";
-import { object } from "motion/react-client";
-
 // src/utils/dataTransform.ts
 export const transformTodoStats = (todos: any[]) => {
 	return todos.reduce((acc, cur) => {
