@@ -14,7 +14,7 @@ export const Sidebar = () => {
 	return (
 		<div className="flex flex-col h-full w-64 bg-white border-r border-slate-100 shadow-lg">
 			<div className="p-6 flex items-center justify-center border-b border-slate-50">
-				<img src={logoIMG} alt="로고 이미지" className="h-12 w-auto object-contain" />
+				<img src={logoIMG} alt="로고 이미지" className="h-18 w-auto object-contain" />
 			</div>
 
 			<nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -26,10 +26,10 @@ export const Sidebar = () => {
 						<div key={menu.id} className="space-y-1">
 							<button onClick={() => toggleMenu(menu.id)} className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors duration-200">
 								<div className="flex items-center gap-3">
-									<MenuIcon className="w-5 h-5 text-slate-500" />
-									<span className="text-sm font-bold text-slate-800">{menu.title}</span>
+									<MenuIcon className="w-6 h-6 text-slate-500" />
+									<span className="text-lg font-bold text-slate-800">{menu.title}</span>
 								</div>
-								{isOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+								{isOpen ? <ChevronUp className="w-6 h-6 text-slate-400" /> : <ChevronDown className="w-6 h-6 text-slate-400" />}
 							</button>
 
 							<div className={`pl-9 space-y-1 overflow-hidden transition-all duration-300 ${isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
@@ -39,7 +39,7 @@ export const Sidebar = () => {
 									return (
 										<Link to={sub.url} key={subIdx} className="block">
 											<div
-												className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors duration-200 ${
+												className={`px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200 ${
 													isActive ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900" // 마우스 호버 시 연한 회색
 												}`}
 											>

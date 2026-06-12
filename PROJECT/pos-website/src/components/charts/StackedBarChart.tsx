@@ -10,7 +10,8 @@ interface StackedBarChartProps {
 
 export const StackedBarChart = ({ title, labels, data }: StackedBarChartProps) => {
 	if (!data || data.length === 0) {
-		return console.log("데이터가 존재하지 않습니다.");
+		console.log("데이터가 존재하지 않습니다.");
+		return null;
 	}
 
 	const chartData = {

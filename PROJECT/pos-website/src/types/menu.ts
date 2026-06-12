@@ -3,6 +3,6 @@ import type React from "react";
 export interface MenuItem {
 	id: string;
 	title: string;
-	url: string;
+	basePath: string;
 	page: React.ComponentType;
 }

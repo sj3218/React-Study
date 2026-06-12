@@ -1,55 +1,34 @@
 import { Bar } from "react-chartjs-2";
 import { COLORS } from "../../constants/colors";
-import type { DATA_NUMBER, DATA_NUMBERS } from "../../types/charts";
-
-type SingleMode = {
-	stacked?: false;
-	data: DATA_NUMBER[];
-	labels?: never;
-};
-
-type MultiMode = {
-	stacked?: boolean;
-	data: DATA_NUMBERS[];
-	labels: string[];
-};
+import type { DATA_NUMBER } from "../../types/charts";
 
 type BarChartProps = {
 	title: string;
 	axis?: "x" | "y";
-} & (SingleMode | MultiMode);
+	data: DATA_NUMBER[];
+	labels?: never;
+};
 
-export const BarChart = ({ title, axis = "x", stacked = false, data, labels }: BarChartProps) => {
+export const BarChart = ({ title, axis = "x", data, labels }: BarChartProps) => {
 	if (!data || data.length === 0) {
-		return console.log("데이터가 존재하지 않습니다.");
+		console.log("데이터가 존재하지 않습니다.");
+		return null;
 	}
 
 	const isMulti = labels !== undefined;
-	const chartData = isMulti
-		? {
-				labels,
-				datasets: (data as DATA_NUMBERS[]).map((item, i) => ({
-					label: item.name,
-					data: item.values,
-					backgroundColor: COLORS[i % COLORS.length],
-					borderRadius: 4,
-					barPercentage: 0.6,
-					categoryPercentage: 0.8,
-				})),
-			}
-		: {
-				labels: (data as DATA_NUMBER[]).map((item) => item.name),
-				datasets: [
-					{
-						data: (data as DATA_NUMBER[]).map((item) => item.value),
-						backgroundColor: COLORS,
-						borderRadius: 4,
-						borderSkipped: false,
-						barPercentage: 0.3,
-						categoryPercentage: 0.8,
-					},
-				],
-			};
+	const chartData = {
+		labels: (data as DATA_NUMBER[]).map((item) => item.name),
+		datasets: [
+			{
+				data: (data as DATA_NUMBER[]).map((item) => item.value),
+				backgroundColor: COLORS,
+				borderRadius: 4,
+				borderSkipped: false,
+				barPercentage: 0.3,
+				categoryPercentage: 0.8,
+			},
+		],
+	};
 
 	const options = {
 		responsive: true,
@@ -60,7 +39,6 @@ export const BarChart = ({ title, axis = "x", stacked = false, data, labels }: B
 			tooltip: { enabled: true },
 			datalabels: { display: false },
 		},
-		scales: stacked ? { x: { stacked: true }, y: { stacked: true } } : {},
 	};
 
 	return (
